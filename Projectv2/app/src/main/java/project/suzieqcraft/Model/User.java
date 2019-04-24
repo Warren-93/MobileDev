@@ -1,15 +1,26 @@
 package project.suzieqcraft.Model;
 
-public class User {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    protected String username;
+import java.util.ArrayList;
+
+public class User extends ArrayList {
+
+    protected  int userID;
+    protected String name;
     protected String userEmail;
     protected boolean loggedIn;
 
+
+
+    public User(int userID, String name, String userEmail) {
+        this.userID = userID;
+        this.name = name;
+        this.userEmail = userEmail;
+        this.loggedIn = loggedIn;
+    }
+
     public User() {
-        this.userEmail = "";
-        this.username = "";
-        this.loggedIn = false;
     }
 
     public boolean setLoggedIn(){
@@ -26,17 +37,40 @@ public class User {
         return this.loggedIn;
     }
 
+    @JsonProperty("User_ID")
+    public int getUserID() {
+        return userID;
+    }
+
+    @JsonProperty("User_ID")
+    public User setUserID(int userID) {
+        this.userID = userID;
+        return this;
+    }
+
+    @JsonProperty("Email")
     public String setEmail(String userEmail){
         this.userEmail = userEmail;
         return this.userEmail;
     }
 
+    @JsonProperty("Email")
     public String getEmail(){
         return this.userEmail;
     }
 
-    public String setUsername(String username){
-        this.username = username;
-        return this.username;
+
+    @JsonProperty("Product_ID")
+    public String setName(String name){
+        this.name = name;
+        return this.name;
     }
+
+    @JsonProperty("First_Name")
+    public String getName(){
+        return this.name;
+    }
+
+
+
 }

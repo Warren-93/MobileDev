@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -14,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,21 +22,19 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import project.suzieqcraft.Model.Product;
-import project.suzieqcraft.Model.ProductArrayList;
 import project.suzieqcraft.R;
-import project.suzieqcraft.View.CustomAdapter;
+import project.suzieqcraft.Controller.CustomAdapter;
 
 
 public class test extends AppCompatActivity {
 
-         public     RecyclerView recyclerViewer;
-         public     CustomAdapter adapter;
-         public     TextView textView;
+    public RecyclerView recyclerViewer;
+    public CustomAdapter adapter;
+    private ArrayList<Product> productList = new ArrayList();
 
 
     @Override
@@ -49,44 +45,41 @@ public class test extends AppCompatActivity {
 
         new BackgroundProducts().execute();
         recyclerViewer = findViewById( R.id.recyclerViewer );
-        //load_data_from_server(0);
 
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager( this);
-        recyclerViewer.setLayoutManager(linearLayoutManager);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager( this );
+        recyclerViewer.setLayoutManager( linearLayoutManager );
 
+        adapter = new CustomAdapter(productList);
+        recyclerViewer.setAdapter(adapter);
 
-//        adapter = new CustomAdapter(this, productsList);
-//        recyclerViewer.setAdapter(adapter);
-
-//        recyclerViewer.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//        @Override
-//        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//            if(linearLayoutManager.findLastCompletelyVisibleItemPosition() == (productsList.size() - 1)){
-//                new BackgroundProducts().execute();
-//                //load_data_from_server(data_list.get(data_list.size()-1).getId());
-//                }
-//            }
-//        });
+        recyclerViewer.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            if(linearLayoutManager.findLastCompletelyVisibleItemPosition() == (productList.size() - 1)){
+                new BackgroundProducts().execute();
+                }
+            }
+        });
     }
 
-     protected class BackgroundProducts extends AsyncTask<String, Void, String>{
+    protected class BackgroundProducts extends AsyncTask<String, Void, String> {
         private String productjson_url;
 
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             productjson_url = "https://mayar.abertay.ac.uk/~1605460/Android/Model/getProducts.php";
         }
 
         @Override
         protected String doInBackground(String... strings) {
             try {
-                URL url = new URL(productjson_url);
-                HttpsURLConnection httpsURLConnection = (HttpsURLConnection)url.openConnection();
+                URL url = new URL( productjson_url );
+                HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
                 InputStream inputStream = httpsURLConnection.getInputStream();
                 BufferedReader bufferedReader = new BufferedReader( new InputStreamReader( inputStream ) );
                 String result = "";
                 String line;
-                while((line = bufferedReader.readLine()) != null) {
+                while ((line = bufferedReader.readLine()) != null) {
                     result += line;
                 }
                 return result;
@@ -99,34 +92,29 @@ public class test extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate(Void...values){
-            super.onProgressUpdate(values);
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate( values );
         }
 
         @Override
         protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            //                JSONArray products = new JSONArray(result);
-//                ProductArrayList productList = new ObjectMapper().readValue(products.toString(), ProductArrayList.class);
-
-//                JSONArray products = new JSONArray(result);
-//                ArrayList<Product> productList;
-//                productList = new ObjectMapper().readValue(products.toString(), ArrayList.class);
-//
-
+            super.onPostExecute( result );
 
             try {
                 JSONArray products = new JSONArray(result);
-                ArrayList<HashMap<String, String>> jsonObjectArrayList = null;
+                ArrayList<HashMap<String, String>> jsonObjectArrayList;
 
-                jsonObjectArrayList = new ObjectMapper().readValue( products.toString(), ArrayList.class );
+                jsonObjectArrayList = new ObjectMapper().readValue(products.toString(), ArrayList.class);
 
-                for (HashMap<String, String> products : jsonObjectArrayList) {
-                    jsonObjectArrayList.add();
-
+                for (HashMap<String, String> productToBeAdded : jsonObjectArrayList) {
+                    productList.add(new Product(Integer.parseInt(productToBeAdded.get("0")), productToBeAdded.get( "Product_Type" ), productToBeAdded.get("Product_Image")));
                 }
-            }catch (JSONException e) {
+                adapter = new CustomAdapter(productList);
+                recyclerViewer.setAdapter(adapter);
+
+                adapter.notifyDataSetChanged();
+
+            } catch (JSONException e) {
                 e.printStackTrace();
             } catch (JsonParseException e) {
                 e.printStackTrace();
@@ -136,14 +124,8 @@ public class test extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
-        }
-
-//                adapter = new CustomAdapter( test.this, productList);
-//                recyclerViewer.setAdapter(adapter);
-//                adapter.notifyDataSetChanged();
-
         }
     }
 }
+
 

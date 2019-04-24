@@ -39,7 +39,7 @@ public class Home extends AppCompatActivity {
         menuBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                startActivity(new Intent(Home.this, test.class));
+                startActivity(new Intent(Home.this, AppMenu.class));
             }
         });
     }

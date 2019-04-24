@@ -7,8 +7,7 @@ import java.util.ArrayList;
 
 public class ProductArrayList extends ArrayList<Product> {
 
-    ArrayList<Product> productList = new ArrayList();
-
+    public ArrayList productList;
 
     public ProductArrayList(){
         super();
